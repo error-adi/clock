@@ -5,51 +5,77 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Clay Clock</title>
 
-    <!-- Font Awesome for icons -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-    />
-
-    <!-- Google Fonts - will finalize in Step 2 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Nunito:wght@800;900&display=swap"
-      rel="stylesheet"
-    />
-
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@800;900&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
   </head>
 
   <body>
 
-    <main class="clock-wrapper">
-        <div class="clock">
-            <div id="clock">
-                <!-- JS injects time -->
-            </div>
-    
-            <div class="ampm" id="ampm">
-                <!-- ampm -->
-            </div>
+    <!-- Mini clock — lives top-left when timer is active -->
+    <div class="mini-clock-wrapper" id="miniClockWrapper">
+      <div class="mini-clock" id="miniClock"></div>
+      <div class="mini-ampm" id="miniAmpm"></div>
+    </div>
+
+    <!-- Main display — clock OR timer -->
+    <main class="clock-wrapper" id="clockWrapper">
+
+      <!-- Clock display -->
+      <div class="clock" id="clockDisplay">
+        <div id="clock"></div>
+        <div class="ampm" id="ampm"></div>
+      </div>
+
+      <!-- Timer display (hidden by default) -->
+      <div class="timer-display" id="timerDisplay">
+
+        <!-- The digits — scroll/drag to set -->
+        <div class="timer-digits" id="timerDigits">
+          <div class="timer-unit" id="timerHours">
+            <div class="timer-digit" data-unit="hours">00</div>
+          </div>
+          <span class="timer-sep">:</span>
+          <div class="timer-unit" id="timerMinutes">
+            <div class="timer-digit" data-unit="minutes">00</div>
+          </div>
+          <span class="timer-sep" id="timerSecSep">:</span>
+          <div class="timer-unit" id="timerSeconds">
+            <div class="timer-digit" data-unit="seconds">00</div>
+          </div>
         </div>
+
+      </div>
+
     </main>
 
-    <!-- Gear icon (top right, auto-hides on idle) -->
+    <!-- Timer controls — below timer, hide on idle -->
+    <div class="timer-controls" id="timerControls">
+      <button class="timer-btn" id="timerStartBtn" disabled>
+        <i class="fa-solid fa-play" id="timerStartIcon"></i>
+        <span class="timer-btn-label" id="timerStartLabel">Start</span>
+      </button>
+      <button class="timer-btn" id="timerResetBtn">
+        <i class="fa-solid fa-rotate-left"></i>
+        <span class="timer-btn-label">Reset</span>
+      </button>
+    </div>
+
+    <!-- Top-right controls -->
     <div class="top-controls">
       <button class="control-btn" id="fullscreenBtn" aria-label="Toggle fullscreen">
         <i class="fa-solid fa-expand" id="fullscreenIcon"></i>
       </button>
-    
+
       <div class="settings-anchor" id="settingsAnchor">
         <button class="gear-btn" id="gearBtn" aria-label="Open settings">
           <i class="fa-solid fa-gear"></i>
         </button>
-    
-        <!-- Settings panel (expands from gear icon) -->
+
         <div class="settings-panel" id="settingsPanel" aria-hidden="true">
-    
+
           <!-- Option 1: Clock Format -->
           <div class="settings-row">
             <span class="settings-label">Clock Format</span>
@@ -62,9 +88,9 @@
               <span class="toggle-option" id="labelHHMMSS">HH:MM:SS</span>
             </div>
           </div>
-    
+
           <div class="settings-divider"></div>
-    
+
           <!-- Option 2: Hour Format -->
           <div class="settings-row">
             <span class="settings-label">Hour Format</span>
@@ -77,10 +103,25 @@
               <span class="toggle-option" id="label12H">12H</span>
             </div>
           </div>
-    
+
           <div class="settings-divider"></div>
-    
-          <!-- Option 3: Theme -->
+
+          <!-- Option 3: Timer -->
+          <div class="settings-row">
+            <span class="settings-label">Timer</span>
+            <div class="toggle-group">
+              <span class="toggle-option" id="labelTimerOff">Off</span>
+              <label class="switch" aria-label="Toggle timer">
+                <input type="checkbox" id="timerToggle" />
+                <span class="slider"></span>
+              </label>
+              <span class="toggle-option" id="labelTimerOn">On</span>
+            </div>
+          </div>
+
+          <div class="settings-divider"></div>
+
+          <!-- Option 4: Theme -->
           <div class="settings-row">
             <span class="settings-label">Theme</span>
             <div class="toggle-group">
@@ -92,13 +133,10 @@
               <span class="toggle-option" id="labelDark">Dark</span>
             </div>
           </div>
-    
+
         </div>
-        <!-- /.settings-panel -->
       </div>
-      <!-- /.settings-anchor -->
     </div>
-    <!-- /.top-controls -->
 
     <script src="script.js"></script>
   </body>

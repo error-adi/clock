@@ -474,3 +474,292 @@ body.controls-visible .top-controls {
     width: 220px;
   }
 }
+
+/* ============================================
+   TIMER & MINI CLOCK — additions
+   ============================================ */
+
+/* --------------------------------------------
+   MINI CLOCK — top left when timer is active
+   -------------------------------------------- */
+.mini-clock-wrapper {
+  position: fixed;
+  top: 36px;
+  left: 36px;
+  z-index: 50;
+  display: flex;
+  align-items: flex-end;
+  gap: 0.2em;
+
+  /* Hidden by default — animates in when timer mode on */
+  opacity: 0;
+  transform: scale(0.6) translate(-40px, -20px);
+  transform-origin: top left;
+  pointer-events: none;
+  transition:
+    opacity 0.5s cubic-bezier(0.34, 1.45, 0.64, 1),
+    transform 0.5s cubic-bezier(0.34, 1.45, 0.64, 1);
+}
+
+.mini-clock-wrapper.visible {
+  opacity: 1;
+  transform: scale(1) translate(0, 0);
+}
+
+.mini-clock {
+  font-size: clamp(1.4rem, 3.5vw, 3rem);
+  font-weight: 900;
+  color: var(--text);
+  text-shadow: var(--clay-shadow);
+  line-height: 1;
+  transition: color 0.4s ease, text-shadow 0.4s ease;
+}
+
+.mini-clock .sep {
+  display: inline-block;
+  margin: 0 0.02em;
+  opacity: 0.85;
+}
+
+.mini-ampm {
+  font-size: clamp(0.5rem, 1vw, 0.9rem);
+  font-weight: 800;
+  color: var(--text);
+  text-shadow: var(--clay-shadow);
+  line-height: 1;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.15em;
+  opacity: 0;
+  transition: opacity 0.3s ease, color 0.4s ease;
+}
+
+.mini-ampm.visible {
+  opacity: 0.72;
+}
+
+
+/* --------------------------------------------
+   CLOCK DISPLAY — animates out when timer on
+   -------------------------------------------- */
+#clockDisplay {
+  display: flex;
+  align-items: center;
+  gap: 0.05em;
+  transition: opacity 0.35s ease;
+}
+
+#clockDisplay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+
+/* --------------------------------------------
+   TIMER DISPLAY
+   -------------------------------------------- */
+.timer-display {
+  position: fixed;
+  inset: 0;
+
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* width: 100%; */
+
+  opacity: 0;
+  transform: scale(0.85) translateY(20px);
+  transition:
+    opacity 0.45s ease,
+    transform 0.45s cubic-bezier(0.34, 1.45, 0.64, 1);
+}
+
+.timer-display.visible {
+  display: flex;
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+/* Force display:flex before opacity transition kicks in */
+.timer-display.animating {
+  display: flex;
+}
+
+.timer-digits {
+  display: flex;
+  align-items: center;
+  font-size: clamp(4rem, 22vw, 22rem);
+  font-weight: 900;
+  line-height: 1;
+  color: var(--text);
+  text-shadow: var(--clay-shadow);
+  transition:
+    color 0.4s ease,
+    font-size 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+    text-shadow 0.4s ease;
+}
+
+/* Auto-collapse font size when hours visible */
+.timer-digits.has-hours {
+  font-size: clamp(2.5rem, 13.5vw, 13rem);
+}
+
+.timer-digits.has-minutes:not(.has-hours) {
+  font-size: clamp(3rem, 17vw, 17rem);
+}
+
+.timer-unit {
+  position: relative;
+  cursor: ns-resize;
+  user-select: none;
+  /* Subtle hint that this is scrollable */
+  transition: opacity 0.2s ease;
+}
+
+.timer-unit:hover {
+  opacity: 0.8;
+}
+
+/* Hide units that are collapsed during countdown */
+.timer-unit.hidden-unit {
+  display: none;
+}
+
+.timer-sep {
+  display: inline-block;
+  margin: 0 0.02em;
+  transform: translateY(-0.05em);
+  opacity: 0.85;
+  transition: opacity 0.3s ease;
+}
+
+.timer-sep.hidden-sep {
+  display: none;
+}
+
+/* Subtle scroll hint arrows on hover — setting mode only */
+.timer-unit::before,
+.timer-unit::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.timer-unit::before {
+  top: -0.18em;
+  border-left: 0.12em solid transparent;
+  border-right: 0.12em solid transparent;
+  border-bottom: 0.14em solid var(--text);
+}
+
+.timer-unit::after {
+  bottom: -0.18em;
+  border-left: 0.12em solid transparent;
+  border-right: 0.12em solid transparent;
+  border-top: 0.14em solid var(--text);
+}
+
+.timer-unit.settable:hover::before,
+.timer-unit.settable:hover::after {
+  opacity: 0.3;
+}
+
+
+/* --------------------------------------------
+   TIMER CONTROLS — below timer
+   -------------------------------------------- */
+.timer-controls {
+  position: fixed;
+  bottom: 52px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  z-index: 50;
+
+  /* Same hide-on-idle as top controls */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+
+.timer-controls.timer-active {
+  /* Only show when timer mode is on AND controls visible */
+}
+
+body.controls-visible .timer-controls.timer-active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.timer-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: var(--gear-bg);
+  border: 1px solid var(--gear-border);
+  box-shadow: var(--gear-shadow);
+  color: var(--gear-color);
+  border-radius: 20px;
+  padding: 14px 24px;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.4rem;
+  transition:
+    transform 0.25s ease,
+    background 0.3s ease,
+    box-shadow 0.3s ease,
+    opacity 0.3s ease;
+}
+
+.timer-btn:hover {
+  transform: scale(1.08);
+}
+
+.timer-btn:active {
+  transform: scale(0.95);
+}
+
+.timer-btn:disabled {
+  cursor: default;
+  pointer-events: none;
+  opacity: 0.35;
+}
+
+.timer-btn-label {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--label-muted);
+  transition: color 0.3s ease;
+}
+
+
+/* --------------------------------------------
+   RESPONSIVE TWEAKS — timer
+   -------------------------------------------- */
+@media (max-width: 480px) {
+  .mini-clock-wrapper {
+    top: 20px;
+    left: 20px;
+  }
+
+  .timer-controls {
+    bottom: 32px;
+    gap: 16px;
+  }
+
+  .timer-btn {
+    padding: 12px 18px;
+    font-size: 1.2rem;
+  }
+}
