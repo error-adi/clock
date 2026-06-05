@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Clay Clock</title>
+
+    <!-- Font Awesome for icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+
+    <!-- Google Fonts - will finalize in Step 2 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@800;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+
+    <main class="clock-wrapper">
+        <div class="clock">
+            <div id="clock">
+                <!-- JS injects time -->
+            </div>
+    
+            <div class="ampm" id="ampm">
+                <!-- ampm -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Gear icon (top right, auto-hides on idle) -->
+    <div class="top-controls">
+      <button class="control-btn" id="fullscreenBtn" aria-label="Toggle fullscreen">
+        <i class="fa-solid fa-expand" id="fullscreenIcon"></i>
+      </button>
+    
+      <div class="settings-anchor" id="settingsAnchor">
+        <button class="gear-btn" id="gearBtn" aria-label="Open settings">
+          <i class="fa-solid fa-gear"></i>
+        </button>
+    
+        <!-- Settings panel (expands from gear icon) -->
+        <div class="settings-panel" id="settingsPanel" aria-hidden="true">
+    
+          <!-- Option 1: Clock Format -->
+          <div class="settings-row">
+            <span class="settings-label">Clock Format</span>
+            <div class="toggle-group">
+              <span class="toggle-option" id="labelHHMM">HH:MM</span>
+              <label class="switch" aria-label="Toggle clock format">
+                <input type="checkbox" id="formatToggle" />
+                <span class="slider"></span>
+              </label>
+              <span class="toggle-option" id="labelHHMMSS">HH:MM:SS</span>
+            </div>
+          </div>
+    
+          <div class="settings-divider"></div>
+    
+          <!-- Option 2: Hour Format -->
+          <div class="settings-row">
+            <span class="settings-label">Hour Format</span>
+            <div class="toggle-group">
+              <span class="toggle-option" id="label24H">24H</span>
+              <label class="switch" aria-label="Toggle hour format">
+                <input type="checkbox" id="hourToggle" />
+                <span class="slider"></span>
+              </label>
+              <span class="toggle-option" id="label12H">12H</span>
+            </div>
+          </div>
+    
+          <div class="settings-divider"></div>
+    
+          <!-- Option 3: Theme -->
+          <div class="settings-row">
+            <span class="settings-label">Theme</span>
+            <div class="toggle-group">
+              <span class="toggle-option" id="labelLight">Light</span>
+              <label class="switch" aria-label="Toggle theme">
+                <input type="checkbox" id="themeToggle" />
+                <span class="slider"></span>
+              </label>
+              <span class="toggle-option" id="labelDark">Dark</span>
+            </div>
+          </div>
+    
+        </div>
+        <!-- /.settings-panel -->
+      </div>
+      <!-- /.settings-anchor -->
+    </div>
+    <!-- /.top-controls -->
+
+    <script src="script.js"></script>
+  </body>
+</html>

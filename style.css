@@ -1,0 +1,486 @@
+/* ============================================
+   CLAY CLOCK — style.css
+   ============================================ */
+
+/* --------------------------------------------
+   1. THEME VARIABLES
+   -------------------------------------------- */
+:root {
+  /* Light mode (default) */
+  --bg:            #EDEAE4;
+  --bg-noise:      rgba(0, 0, 0, 0.015);
+  --text:          #1C1C1E;
+  --text-sub:      #3A3A3C;
+
+  /* Clay digit shadow layers (light) */
+  --clay-shadow:
+    0px 8px 0px #C8C4BC,
+    0px 12px 24px rgba(0, 0, 0, 0.18),
+    inset 0px 2px 4px rgba(255, 255, 255, 0.75),
+    inset 0px -2px 4px rgba(0, 0, 0, 0.08);
+
+  /* Settings panel */
+  --panel-bg:      #F5F2ED;
+  --panel-border:  rgba(0, 0, 0, 0.07);
+  --panel-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.14),
+    0 4px 16px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  --divider:       rgba(0, 0, 0, 0.08);
+
+  /* Gear button */
+  --gear-bg:       #E2DED7;
+  --gear-border:   rgba(0, 0, 0, 0.08);
+  --gear-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  --gear-color:    #1C1C1E;
+
+  /* Toggle switch */
+  --switch-track:  #C8C4BC;
+  --switch-thumb:  #FFFFFF;
+  --switch-active: #5B8A72;
+
+  /* Label active color */
+  --label-active:  #1C1C1E;
+  --label-muted:   #9A9A9C;
+}
+
+[data-theme="dark"] {
+  --bg:            #141416;
+  --bg-noise:      rgba(255, 255, 255, 0.015);
+  --text:          #F0EDE8;
+  --text-sub:      #AEAEB2;
+
+  --clay-shadow:
+    0px 8px 0px #0A0A0C,
+    0px 12px 28px rgba(0, 0, 0, 0.55),
+    inset 0px 2px 4px rgba(255, 255, 255, 0.06),
+    inset 0px -2px 4px rgba(0, 0, 0, 0.4);
+
+  --panel-bg:      #1E1E22;
+  --panel-border:  rgba(255, 255, 255, 0.06);
+  --panel-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.5),
+    0 4px 16px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  --divider:       rgba(255, 255, 255, 0.07);
+
+  --gear-bg:       #2A2A2E;
+  --gear-border:   rgba(255, 255, 255, 0.07);
+  --gear-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  --gear-color:    #F0EDE8;
+
+  --switch-track:  #3A3A3E;
+  --switch-thumb:  #E0DDD8;
+  --switch-active: #6BA888;
+
+  --label-active:  #F0EDE8;
+  --label-muted:   #6E6E72;
+}
+
+
+/* --------------------------------------------
+   2. RESET & BASE
+   -------------------------------------------- */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background-color: var(--bg);
+  /* Subtle noise texture feel via pseudo-element */
+  font-family: 'Nunito', sans-serif;
+  transition: background-color 0.4s ease;
+  cursor: default;
+  user-select: none;
+}
+
+/* Soft vignette to give the background depth */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 40%,
+    rgba(0, 0, 0, 0.06) 100%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+[data-theme="dark"] body::after {
+  background: radial-gradient(
+    ellipse at center,
+    transparent 40%,
+    rgba(0, 0, 0, 0.35) 100%
+  );
+}
+
+
+/* --------------------------------------------
+   3. CLOCK LAYOUT
+   -------------------------------------------- */
+.clock-wrapper {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.clock {
+  display: flex;
+  align-items: center;
+  gap: 0.05em;
+
+  /* Fluid font size — fills ~85% of viewport width for HH:MM */
+  font-size: clamp(4rem, 22vw, 22rem);
+  font-weight: 900;
+  line-height: 1;
+  color: var(--text);
+  transition: color 0.4s ease;
+
+  /* Claymorphism text effect */
+  text-shadow: var(--clay-shadow);
+
+  /* Smooth size transition when seconds toggle */
+  transition:
+    color 0.4s ease,
+    font-size 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+    text-shadow 0.4s ease;
+}
+
+/* When seconds are visible, shrink font so it still fits */
+.clock.show-seconds {
+  font-size: clamp(2.5rem, 13.5vw, 13rem);
+}
+
+/* The colon separator */
+.clock .sep {
+  display: inline-block;
+  margin: 0 0.02em;
+  /* Sit slightly higher than digits optically */
+  transform: translateY(-0.05em);
+  opacity: 0.85;
+}
+
+/* AM/PM label — inline foot, bottom-aligned to the digits */
+.ampm {
+  display: none;
+
+  font-size: clamp(0.9rem, 2.5vw, 2.5rem);
+  font-weight: 800;
+  color: var(--text);
+  text-shadow: var(--clay-shadow);
+  line-height: 1;
+  letter-spacing: 0.04em;
+
+  /* Align to bottom of digit line */
+  align-self: flex-end;
+  margin-bottom: 0.08em;
+  margin-left: 0.15em;
+
+  /* Fade in/out */
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 0.35s ease,
+    transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+    color 0.4s ease,
+    text-shadow 0.4s ease;
+  pointer-events: none;
+}
+
+.ampm.visible {
+  display: block;
+  opacity: 0.72;
+  transform: translateY(0);
+}
+
+/* Top controls bar — fullscreen + gear */
+.top-controls {
+  position: fixed;
+  top: 28px;
+  right: 28px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+
+body.controls-visible .top-controls {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.control-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 1px solid var(--gear-border);
+  background: var(--gear-bg);
+  box-shadow: var(--gear-shadow);
+  color: var(--gear-color);
+  font-size: 1.3rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.3s ease;
+}
+
+.control-btn:hover {
+  transform: scale(1.08);
+}
+
+.control-btn:active {
+  transform: scale(0.95);
+}
+
+/* --------------------------------------------
+   4. SETTINGS ANCHOR & GEAR BUTTON
+   -------------------------------------------- */
+.settings-anchor {
+  /* position: fixed;
+  top: 28px;
+  right: 28px;
+  z-index: 100; */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+
+  /* Visibility controlled by JS via .controls-visible on body */
+  /* opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none; */
+}
+
+/* body.controls-visible .settings-anchor {
+  opacity: 1;
+  pointer-events: all;
+} */
+
+.gear-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 1px solid var(--gear-border);
+  background: var(--gear-bg);
+  box-shadow: var(--gear-shadow);
+  color: var(--gear-color);
+  font-size: 1.3rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.3s ease;
+  position: relative;
+  z-index: 2;
+}
+
+.gear-btn:hover {
+  transform: scale(1.08);
+}
+
+.gear-btn:active {
+  transform: scale(0.95);
+}
+
+/* Gear spin when panel is open */
+.gear-btn.open .fa-gear {
+  animation: spin-gear 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes spin-gear {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(90deg); }
+}
+
+.gear-btn.closing .fa-gear {
+  animation: spin-gear-back 0.4s ease forwards;
+}
+
+@keyframes spin-gear-back {
+  from { transform: rotate(90deg); }
+  to   { transform: rotate(0deg); }
+}
+
+
+/* --------------------------------------------
+   5. SETTINGS PANEL — iPhone expand animation
+   -------------------------------------------- */
+.settings-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 260px;
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 20px;
+  box-shadow: var(--panel-shadow);
+  padding: 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  z-index: 1;
+
+  /* Hidden state — origin at top-right (where the gear is) */
+  transform-origin: top right;
+  transform: scale(0.3) translateY(-10px);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform 0.38s cubic-bezier(0.34, 1.45, 0.64, 1),
+    opacity 0.25s ease;
+}
+
+.settings-panel.open {
+  transform: scale(1) translateY(60px);
+  opacity: 1;
+  pointer-events: all;
+}
+
+.settings-panel.closing {
+  transform: scale(0.3) translateY(-10px);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform 0.28s cubic-bezier(0.4, 0, 1, 1),
+    opacity 0.2s ease;
+}
+
+
+/* --------------------------------------------
+   6. SETTINGS ROWS
+   -------------------------------------------- */
+.settings-row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.settings-label {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--label-muted);
+  transition: color 0.3s ease;
+}
+
+.toggle-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.toggle-option {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--label-muted);
+  transition: color 0.25s ease;
+  white-space: nowrap;
+}
+
+/* Active label highlight — toggled via JS */
+.toggle-option.active {
+  color: var(--label-active);
+}
+
+.settings-divider {
+  height: 1px;
+  background: var(--divider);
+  margin: 0 -4px;
+}
+
+
+/* --------------------------------------------
+   7. TOGGLE SWITCH
+   -------------------------------------------- */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 42px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.slider {
+  position: absolute;
+  inset: 0;
+  background: var(--switch-track);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.slider::before {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  left: 3px;
+  top: 3px;
+  border-radius: 50%;
+  background: var(--switch-thumb);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.switch input:checked + .slider {
+  background: var(--switch-active);
+}
+
+.switch input:checked + .slider::before {
+  transform: translateX(18px);
+}
+
+
+/* --------------------------------------------
+   8. RESPONSIVE TWEAKS
+   -------------------------------------------- */
+@media (max-width: 480px) {
+  .settings-anchor {
+    top: 16px;
+    right: 16px;
+  }
+
+  .gear-btn {
+    width: 44px;
+    height: 44px;
+    font-size: 1.1rem;
+  }
+
+  .settings-panel {
+    width: 220px;
+  }
+}
