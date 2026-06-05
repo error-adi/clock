@@ -267,17 +267,7 @@ body.controls-visible .top-controls {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-
-  /* Visibility controlled by JS via .controls-visible on body */
-  /* opacity: 0;
-  transition: opacity 0.35s ease;
-  pointer-events: none; */
 }
-
-/* body.controls-visible .settings-anchor {
-  opacity: 1;
-  pointer-events: all;
-} */
 
 .gear-btn {
   width: 52px;
